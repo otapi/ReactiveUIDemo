@@ -5,6 +5,7 @@ using ReactiveUIDemo.Model;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reactive;
 using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -35,23 +36,39 @@ namespace ReactiveUIDemo.ViewModel
             set {this.RaiseAndSetIfChanged(ref _todoTitl, value); }
         }
 
-        public ReactiveCommand<Todo, Todo> AddCommand { get; private set; }
-        // TODO: implement the command
-
+        public ReactiveCommand<Unit, Unit> AddCommand { get; private set; }
+        
         public ItemsViewModel(IScreen hostScreen = null) : base(hostScreen)
         {
             _todos.Connect()
             .ObserveOn(RxApp.MainThreadScheduler)
             .Bind(_targetCollection)
             .Subscribe();
-
             
-
             this.WhenAnyValue(x => x.TodoTitle,
                 title => 
                 !String.IsNullOrEmpty(title)).ToProperty(this, x => x.CanAdd, out _canAdd);
 
-            
+            AddCommand = ReactiveCommandFromAsync(async () =>
+            {
+                if (CanAdd)
+                {
+                    Todos.Add(new Todo() { Title = TodoTitle });
+                    TodoTitle = string.Empty;
+                }
+            });
+            /*
+            AddCommand = ReactiveCommand.CreateFromObservable(() => Observable.StartAsync(async () =>
+                {
+                    if (CanAdd)
+                    {
+                        Todos.Add(new Todo() { Title = TodoTitle });
+                        TodoTitle = string.Empty;
+                    }
+                })
+            );
+            */
+
             _todos.Add(new Todo { IsDone = false, Title = "Go to Sleep" });
             _todos.Add(new Todo { IsDone = false, Title = "Go get some dinner" });
             _todos.Add(new Todo { IsDone = false, Title = "Watch GOT" });

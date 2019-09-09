@@ -24,7 +24,8 @@ namespace ReactiveUIDemo.Services
                 return _userCredentials[username] == password;
             }
 
-            return false;
+            // As this is just a demo...
+            return true;
         }
     }
 }

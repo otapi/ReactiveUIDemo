@@ -2,7 +2,10 @@
 using Splat;
 using System;
 using System.Collections.Generic;
+using System.Reactive;
+using System.Reactive.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace ReactiveUIDemo.ViewModel
 {
@@ -30,6 +33,11 @@ namespace ReactiveUIDemo.ViewModel
         public ViewModelBase(IScreen hostScreen = null)
         {
             HostScreen = hostScreen ?? Locator.Current.GetService<IScreen>();
+        }
+
+        protected ReactiveCommand<Unit, Unit> ReactiveCommandFromAsync(Func<Task> functask)
+        {
+            return ReactiveCommand.CreateFromObservable(() => Observable.StartAsync(functask));
         }
     }
 }
