@@ -36,10 +36,28 @@ namespace ReactiveUIDemo.ViewModel
             set {this.RaiseAndSetIfChanged(ref _todoTitl, value); }
         }
 
-        public ReactiveCommand<Unit, Unit> AddCommand { get; private set; }
-        
+        public ReactiveCommand<Unit, Todo> AddItem { get; private set; }
+
+        async Task<Todo> AddItemImpl()
+        {
+            if (CanAdd)
+            {
+                var newItem = new Todo() { Title = TodoTitle };
+                Todos.Add(newItem);
+
+                TodoTitle = string.Empty;
+                return newItem;
+            }
+            else
+            {
+                return null;
+            }
+        }
         public ItemsViewModel(IScreen hostScreen = null) : base(hostScreen)
         {
+   
+            AddItem = ReactiveCommand.CreateFromObservable((Unit unit) => Observable.StartAsync(AddItemImpl));
+
             _todos.Connect()
             .ObserveOn(RxApp.MainThreadScheduler)
             .Bind(_targetCollection)
@@ -48,26 +66,6 @@ namespace ReactiveUIDemo.ViewModel
             this.WhenAnyValue(x => x.TodoTitle,
                 title => 
                 !String.IsNullOrEmpty(title)).ToProperty(this, x => x.CanAdd, out _canAdd);
-
-            AddCommand = ReactiveCommandFromAsync(async () =>
-            {
-                if (CanAdd)
-                {
-                    Todos.Add(new Todo() { Title = TodoTitle });
-                    TodoTitle = string.Empty;
-                }
-            });
-            /*
-            AddCommand = ReactiveCommand.CreateFromObservable(() => Observable.StartAsync(async () =>
-                {
-                    if (CanAdd)
-                    {
-                        Todos.Add(new Todo() { Title = TodoTitle });
-                        TodoTitle = string.Empty;
-                    }
-                })
-            );
-            */
 
             _todos.Add(new Todo { IsDone = false, Title = "Go to Sleep" });
             _todos.Add(new Todo { IsDone = false, Title = "Go get some dinner" });

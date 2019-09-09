@@ -35,9 +35,5 @@ namespace ReactiveUIDemo.ViewModel
             HostScreen = hostScreen ?? Locator.Current.GetService<IScreen>();
         }
 
-        protected ReactiveCommand<Unit, Unit> ReactiveCommandFromAsync(Func<Task> functask)
-        {
-            return ReactiveCommand.CreateFromObservable(() => Observable.StartAsync(functask));
-        }
     }
 }

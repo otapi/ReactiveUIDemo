@@ -13,8 +13,6 @@ namespace ReactiveUIDemo.ViewModel
 {
     public class LoginViewModel : ViewModelBase
     {
-        ILogin _loginService;
-
         private string _userName;
         public string UserName
         {
@@ -42,12 +40,22 @@ namespace ReactiveUIDemo.ViewModel
             get { return _validLogin?.Value ?? false; }
         }
         
-        public ReactiveCommand<Unit, Unit> LoginCommand { get; private set; }
         
-
+        public ReactiveCommand<Unit, Unit> PerformLogin { get; private set; }
+        
         public LoginViewModel(ILogin login, IScreen hostScreen = null) : base(hostScreen)
         {
-            _loginService = login;
+            PerformLogin = ReactiveCommand.CreateFromObservable(() => Observable.StartAsync(async () =>
+            {
+                var lg = await login.Login(_userName, _password);
+                if (lg && ValidLogin)
+                {
+                    HostScreen.Router
+                            .Navigate
+                            .Execute(new ItemsViewModel())
+                            .Subscribe();
+                }
+            }));
 
             this.WhenAnyValue(x => x.UserName, x => x.Password,
                 (email, password) =>
@@ -64,21 +72,8 @@ namespace ReactiveUIDemo.ViewModel
                 ))
                 .ToProperty(this, v => v.ValidLogin, out _validLogin);
 
-            LoginCommand = ReactiveCommand.CreateFromObservable(
-                () =>
-                Observable
-                .StartAsync(async() =>
-                    {
-                        var lg = await login.Login(_userName, _password);
-                        if (lg && ValidLogin)
-                        {
-                            HostScreen.Router
-                                    .Navigate
-                                    .Execute(new ItemsViewModel())
-                                    .Subscribe();
-                        }
-                    })
-                );
+ 
+           
         }
 
     }
