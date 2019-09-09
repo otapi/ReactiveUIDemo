@@ -6,7 +6,7 @@ using System.Text;
 
 namespace ReactiveUIDemo.ViewModel
 {
-    public class ViewModelBase : ReactiveObject, IRoutableViewModel, ISupportsActivation
+    public class ViewModelBase : ReactiveObject, IRoutableViewModel
     {
         public string UrlPathSegment
         {

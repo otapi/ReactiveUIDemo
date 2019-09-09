@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reactive.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -34,7 +35,8 @@ namespace ReactiveUIDemo.ViewModel
             set {this.RaiseAndSetIfChanged(ref _todoTitl, value); }
         }
 
-        public ReactiveCommand AddCommand { get; private set; }
+        public ReactiveCommand<Todo, Todo> AddCommand { get; private set; }
+        // TODO: implement the command
 
         public ItemsViewModel(IScreen hostScreen = null) : base(hostScreen)
         {
@@ -48,14 +50,6 @@ namespace ReactiveUIDemo.ViewModel
             this.WhenAnyValue(x => x.TodoTitle,
                 title => 
                 !String.IsNullOrEmpty(title)).ToProperty(this, x => x.CanAdd, out _canAdd);
-
-            AddCommand = ReactiveCommand.CreateFromTask( () =>
-            {
-                _todos.Add(new Todo() { Title = TodoTitle });
-                TodoTitle = string.Empty;
-                return Task.CompletedTask;
-
-            }, this.WhenAnyValue(x => x.CanAdd, canAdd => canAdd && canAdd));
 
             
             _todos.Add(new Todo { IsDone = false, Title = "Go to Sleep" });

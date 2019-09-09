@@ -39,8 +39,9 @@ namespace ReactiveUIDemo.ViewModel
             get { return _validLogin?.Value ?? false; }
         }
         
-        public ReactiveCommand LoginCommand { get; private set; }
-        
+        public ReactiveCommand<bool, bool> LoginCommand { get; private set; }
+        // TODO: implement the command
+
         public LoginViewModel(ILogin login, IScreen hostScreen = null) : base(hostScreen)
         {
             _loginService = login;
@@ -59,19 +60,6 @@ namespace ReactiveUIDemo.ViewModel
                      Regex.Matches(email, "^\\w+([-+.']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$").Count == 1
                 ))
                 .ToProperty(this, v => v.ValidLogin, out _validLogin);
-
-            LoginCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-
-                var lg = await login.Login(_userName, _password);
-                if (lg)
-                {
-                    HostScreen.Router
-                                .Navigate
-                                .Execute(new ItemsViewModel())
-                                .Subscribe();
-                }
-            }, this.WhenAnyValue(x => x.ValidLogin, x => x.ValidLogin, (validLogin, valid) => ValidLogin && valid));
 
         }
 
