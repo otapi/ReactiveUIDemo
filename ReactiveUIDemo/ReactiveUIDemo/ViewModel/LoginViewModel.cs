@@ -2,9 +2,12 @@
 using ReactiveUIDemo.Services;
 using System;
 using System.Collections.Generic;
+using System.Reactive;
 using System.Reactive.Concurrency;
+using System.Reactive.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace ReactiveUIDemo.ViewModel
 {
@@ -39,8 +42,8 @@ namespace ReactiveUIDemo.ViewModel
             get { return _validLogin?.Value ?? false; }
         }
         
-        public ReactiveCommand<bool, bool> LoginCommand { get; private set; }
-        // TODO: implement the command
+        public ReactiveCommand<Unit, Unit> LoginCommand { get; private set; }
+        
 
         public LoginViewModel(ILogin login, IScreen hostScreen = null) : base(hostScreen)
         {
@@ -61,8 +64,22 @@ namespace ReactiveUIDemo.ViewModel
                 ))
                 .ToProperty(this, v => v.ValidLogin, out _validLogin);
 
+            LoginCommand = ReactiveCommand.CreateFromObservable(
+                () =>
+                Observable
+                .StartAsync(async() =>
+                    {
+                        var lg = await login.Login(_userName, _password);
+                        if (lg && ValidLogin)
+                        {
+                            HostScreen.Router
+                                    .Navigate
+                                    .Execute(new ItemsViewModel())
+                                    .Subscribe();
+                        }
+                    })
+                );
         }
-
 
     }
 }
