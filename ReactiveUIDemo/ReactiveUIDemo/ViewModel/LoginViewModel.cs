@@ -33,10 +33,10 @@ namespace ReactiveUIDemo.ViewModel
         /// Could be performed or not depending on its value
         /// This condition is calculated every time its value changes.
         /// </summary>
-        ObservableAsPropertyHelper<bool> _ValidLogin;
+        ObservableAsPropertyHelper<bool> validLogin;
         public bool ValidLogin
         {
-            get { return _ValidLogin?.Value ?? false; }
+            get { return validLogin?.Value ?? false; }
         }
         
         
@@ -69,7 +69,7 @@ namespace ReactiveUIDemo.ViewModel
                             &&
                      Regex.Matches(email, "^\\w+([-+.']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$").Count == 1
                 ))
-                .ToProperty(this, v => v.ValidLogin, out _ValidLogin);
+                .ToProperty(this, v => v.ValidLogin, out validLogin);
 
  
            

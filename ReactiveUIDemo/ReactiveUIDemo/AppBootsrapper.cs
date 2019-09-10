@@ -8,6 +8,7 @@ using System.Text;
 using Xamarin.Forms;
 using ReactiveUI.XamForms;
 using ReactiveUIDemo.Views;
+using System.ComponentModel;
 
 namespace ReactiveUIDemo
 {
@@ -29,6 +30,11 @@ namespace ReactiveUIDemo
             Locator.CurrentMutable.Register(() => new LoginPage(), typeof(IViewFor<LoginViewModel>));
             Locator.CurrentMutable.Register(() => new ItemsPage(), typeof(IViewFor<ItemsViewModel>));
 
+            // Enable Framework Logging
+            #if DEBUG
+            Locator.CurrentMutable.RegisterConstant(new LoggingService { Level = LogLevel.Debug }, typeof(ILogger));
+            #endif
+
             this
                 .Router
                 .NavigateAndReset
@@ -43,6 +49,35 @@ namespace ReactiveUIDemo
             // boilerplate code will look for. It will know to find us because
             // we've registered our AppBootstrappScreen.
             return new ReactiveUI.XamForms.RoutedViewHost();
+        }
+
+        public class LoggingService : ILogger
+        {
+            public LogLevel Level { get; set; }
+                        
+            public void Write([System.ComponentModel.Localizable(false)] string message, LogLevel logLevel)
+            {
+                if (logLevel >= Level)
+                    System.Diagnostics.Debug.WriteLine(message);
+            }
+
+            public void Write([System.ComponentModel.Localizable(false)] string message, [System.ComponentModel.Localizable(false)] Type type, LogLevel logLevel)
+            {
+                if (logLevel >= Level)
+                    System.Diagnostics.Debug.WriteLine(message);
+            }
+
+            public void Write(Exception exception, [System.ComponentModel.Localizable(false)] string message, [System.ComponentModel.Localizable(false)] Type type, LogLevel logLevel)
+            {
+                if (logLevel >= Level)
+                    System.Diagnostics.Debug.WriteLine(message);
+            }
+
+            public void Write(Exception exception, [System.ComponentModel.Localizable(false)] string message, LogLevel logLevel)
+            {
+                if (logLevel >= Level)
+                    System.Diagnostics.Debug.WriteLine(message);
+            }
         }
     }
 }
