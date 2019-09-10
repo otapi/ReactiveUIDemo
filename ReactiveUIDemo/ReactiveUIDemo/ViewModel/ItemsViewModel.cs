@@ -16,24 +16,26 @@ namespace ReactiveUIDemo.ViewModel
     public class ItemsViewModel : ViewModelBase
     {
         private SourceList<Todo> _todos { get; } = new SourceList<Todo>();
-        private readonly IObservableCollection<Todo> _targetCollection = new ObservableCollectionExtended<Todo>();
-        public IObservableCollection<Todo> Todos => _targetCollection;
+        private readonly IObservableCollection<Todo> _TargetCollection = new ObservableCollectionExtended<Todo>();
+        public IObservableCollection<Todo> Todos => _TargetCollection;
 
-        private Todo _selectedTodo;
+        private Todo _SelectedTodo;
         public Todo SelectedTodo
         {
-            get => _selectedTodo; 
-            set => this.RaiseAndSetIfChanged(ref _selectedTodo , value);
+            get => _SelectedTodo; 
+            set => this.RaiseAndSetIfChanged(ref _SelectedTodo , value);
         }
 
-        private ObservableAsPropertyHelper<bool> _canAdd;
-        public bool CanAdd => _canAdd?.Value ?? false;
 
-        private string _todoTitl;
+        private ObservableAsPropertyHelper<bool> _CanAdd;
+        public bool CanAdd => _CanAdd?.Value ?? false;
+
+        
+        private string _TodoTitl;
         public string TodoTitle
         {
-            get { return _todoTitl; }
-            set {this.RaiseAndSetIfChanged(ref _todoTitl, value); }
+            get { return _TodoTitl; }
+            set {this.RaiseAndSetIfChanged(ref _TodoTitl, value); }
         }
 
         public ReactiveCommand<Unit, Todo> AddItem { get; private set; }
@@ -58,14 +60,15 @@ namespace ReactiveUIDemo.ViewModel
    
             AddItem = ReactiveCommand.CreateFromObservable((Unit unit) => Observable.StartAsync(AddItemImpl));
 
+      
             _todos.Connect()
             .ObserveOn(RxApp.MainThreadScheduler)
-            .Bind(_targetCollection)
+            .Bind(_TargetCollection)
             .Subscribe();
             
             this.WhenAnyValue(x => x.TodoTitle,
                 title => 
-                !String.IsNullOrEmpty(title)).ToProperty(this, x => x.CanAdd, out _canAdd);
+                !String.IsNullOrEmpty(title)).ToProperty(this, x => x.CanAdd, out _CanAdd);
 
             _todos.Add(new Todo { IsDone = false, Title = "Go to Sleep" });
             _todos.Add(new Todo { IsDone = false, Title = "Go get some dinner" });

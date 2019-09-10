@@ -13,19 +13,19 @@ namespace ReactiveUIDemo.ViewModel
 {
     public class LoginViewModel : ViewModelBase
     {
-        private string _userName;
+        private string _UserName;
         public string UserName
         {
-            get => _userName;
+            get => _UserName;
             //Notify when property user name changes
-            set => this.RaiseAndSetIfChanged(ref _userName, value);
+            set => this.RaiseAndSetIfChanged(ref _UserName, value);
         }
 
-        private string _password;
+        private string _Password;
         public string Password
         {
-            get => _password;
-            set => this.RaiseAndSetIfChanged(ref _password, value);
+            get => _Password;
+            set => this.RaiseAndSetIfChanged(ref _Password, value);
         }
 
         /// <summary>
@@ -34,10 +34,10 @@ namespace ReactiveUIDemo.ViewModel
         /// Could be performed or not depending on its value
         /// This condition is calculated every time its value changes.
         /// </summary>
-        ObservableAsPropertyHelper<bool> _validLogin;
+        ObservableAsPropertyHelper<bool> _ValidLogin;
         public bool ValidLogin
         {
-            get { return _validLogin?.Value ?? false; }
+            get { return _ValidLogin?.Value ?? false; }
         }
         
         
@@ -47,7 +47,7 @@ namespace ReactiveUIDemo.ViewModel
         {
             PerformLogin = ReactiveCommand.CreateFromObservable(() => Observable.StartAsync(async () =>
             {
-                var lg = await login.Login(_userName, _password);
+                var lg = await login.Login(_UserName, _Password);
                 if (lg && ValidLogin)
                 {
                     HostScreen.Router
@@ -70,7 +70,7 @@ namespace ReactiveUIDemo.ViewModel
                             &&
                      Regex.Matches(email, "^\\w+([-+.']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$").Count == 1
                 ))
-                .ToProperty(this, v => v.ValidLogin, out _validLogin);
+                .ToProperty(this, v => v.ValidLogin, out _ValidLogin);
 
  
            
