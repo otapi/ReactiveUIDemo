@@ -15,27 +15,27 @@ namespace ReactiveUIDemo.ViewModel
 {
     public class ItemsViewModel : ViewModelBase
     {
-        private SourceList<Todo> _todos { get; } = new SourceList<Todo>();
-        private readonly IObservableCollection<Todo> _TargetCollection = new ObservableCollectionExtended<Todo>();
-        public IObservableCollection<Todo> Todos => _TargetCollection;
+        private SourceList<Todo> todos { get; } = new SourceList<Todo>();
+        private readonly IObservableCollection<Todo> targetCollection = new ObservableCollectionExtended<Todo>();
+        public IObservableCollection<Todo> Todos => targetCollection;
 
-        private Todo _SelectedTodo;
+        private Todo selectedTodo;
         public Todo SelectedTodo
         {
-            get => _SelectedTodo; 
-            set => this.RaiseAndSetIfChanged(ref _SelectedTodo , value);
+            get => selectedTodo; 
+            set => this.RaiseAndSetIfChanged(ref selectedTodo , value);
         }
 
 
-        private ObservableAsPropertyHelper<bool> _CanAdd;
-        public bool CanAdd => _CanAdd?.Value ?? false;
+        private ObservableAsPropertyHelper<bool> canAdd;
+        public bool CanAdd => canAdd?.Value ?? false;
 
         
-        private string _TodoTitl;
+        private string todoTitle;
         public string TodoTitle
         {
-            get { return _TodoTitl; }
-            set {this.RaiseAndSetIfChanged(ref _TodoTitl, value); }
+            get { return todoTitle; }
+            set {this.RaiseAndSetIfChanged(ref todoTitle, value); }
         }
 
         public ReactiveCommand<Unit, Todo> AddItem { get; private set; }
@@ -61,32 +61,32 @@ namespace ReactiveUIDemo.ViewModel
             AddItem = ReactiveCommand.CreateFromObservable((Unit unit) => Observable.StartAsync(AddItemImpl));
 
       
-            _todos.Connect()
+            todos.Connect()
             .ObserveOn(RxApp.MainThreadScheduler)
-            .Bind(_TargetCollection)
+            .Bind(targetCollection)
             .Subscribe();
             
             this.WhenAnyValue(x => x.TodoTitle,
                 title => 
-                !String.IsNullOrEmpty(title)).ToProperty(this, x => x.CanAdd, out _CanAdd);
+                !String.IsNullOrEmpty(title)).ToProperty(this, x => x.CanAdd, out canAdd);
 
-            _todos.Add(new Todo { IsDone = false, Title = "Go to Sleep" });
-            _todos.Add(new Todo { IsDone = false, Title = "Go get some dinner" });
-            _todos.Add(new Todo { IsDone = false, Title = "Watch GOT" });
-            _todos.Add(new Todo { IsDone = false, Title = "Code code and code!!!!" });
+            todos.Add(new Todo { IsDone = false, Title = "Go to Sleep" });
+            todos.Add(new Todo { IsDone = false, Title = "Go get some dinner" });
+            todos.Add(new Todo { IsDone = false, Title = "Watch GOT" });
+            todos.Add(new Todo { IsDone = false, Title = "Code code and code!!!!" });
 
             ///Lets detect when ever a todo Item is marked as done 
             ///IF it is, it is sent to the bottom of the list
             ///Else nothing happens
             
-            _todos.Connect()
+            todos.Connect()
                 .WhenAnyPropertyChanged()
                 .Subscribe(x =>
                 {
                     if (x.IsDone)
                     {
-                        _todos.Remove(x);
-                        _todos.Add(x);
+                        todos.Remove(x);
+                        todos.Add(x);
                     }
                 });
         }

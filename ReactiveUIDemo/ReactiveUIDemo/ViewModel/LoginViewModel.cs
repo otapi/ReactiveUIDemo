@@ -13,18 +13,18 @@ namespace ReactiveUIDemo.ViewModel
 {
     public class LoginViewModel : ViewModelBase
     {
-        private string _UserName;
+        private string userName;
         public string UserName
         {
-            get => _UserName;
-            set => this.RaiseAndSetIfChanged(ref _UserName, value);
+            get => userName;
+            set => this.RaiseAndSetIfChanged(ref userName, value);
         }
 
-        private string _Password;
+        private string password;
         public string Password
         {
-            get => _Password;
-            set => this.RaiseAndSetIfChanged(ref _Password, value);
+            get => password;
+            set => this.RaiseAndSetIfChanged(ref password, value);
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace ReactiveUIDemo.ViewModel
         {
             PerformLogin = ReactiveCommand.CreateFromObservable(() => Observable.StartAsync(async () =>
             {
-                var lg = await login.Login(_UserName, _Password);
+                var lg = await login.Login(userName, password);
                 if (lg && ValidLogin)
                 {
                     HostScreen.Router
