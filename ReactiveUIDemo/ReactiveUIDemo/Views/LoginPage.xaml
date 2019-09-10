@@ -1,22 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ui:ContentPageBase xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="ReactiveUIDemo.Views.LoginPage"
-             xmlns:rxui="clr-namespace:ReactiveUI.XamForms;assembly=ReactiveUI.XamForms"
-             xmlns:viewModels="clr-namespace:ReactiveUIDemo.ViewModel"
-             xmlns:views="clr-namespace:ReactiveUIDemo.Views"
-             xmlns:ui="clr-namespace:ReactiveUIDemo.Views"
-             x:TypeArguments="viewModels:LoginViewModel"
-             >
-    
-    <ContentPage.Content>
-
-        <StackLayout>
+<rxui:ReactiveContentPage
+  x:Class="ReactiveUIDemo.Views.LoginPage"
+  x:TypeArguments="vm:LoginViewModel"          
+  xmlns:vm="clr-namespace:ReactiveUIDemo.ViewModel;assembly=ReactiveUIDemo"
+  xmlns:rxui="clr-namespace:ReactiveUI.XamForms;assembly=ReactiveUI.XamForms"
+  xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+  xmlns="http://xamarin.com/schemas/2014/forms"
+ >
+    <StackLayout>
             <Label Text="Login" FontSize="Large" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center" Margin="10"/>
             <Entry Placeholder="Email" Text="{Binding UserName}" Margin="10, 50, 10, 0"/>
             <Entry Placeholder="Password" IsPassword="True" Text="{Binding Password}" Margin="10"/>
             <Button HorizontalOptions="Center" Margin="10" Text="Login" Command="{Binding PerformLogin}"/>
         </StackLayout>
-    </ContentPage.Content>
-    
-</ui:ContentPageBase>
+</rxui:ReactiveContentPage>

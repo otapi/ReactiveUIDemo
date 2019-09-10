@@ -17,7 +17,6 @@ namespace ReactiveUIDemo.ViewModel
         public string UserName
         {
             get => _UserName;
-            //Notify when property user name changes
             set => this.RaiseAndSetIfChanged(ref _UserName, value);
         }
 

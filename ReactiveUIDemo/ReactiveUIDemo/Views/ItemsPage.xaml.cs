@@ -1,4 +1,5 @@
-﻿using ReactiveUIDemo.ViewModel;
+﻿using ReactiveUI.XamForms;
+using ReactiveUIDemo.ViewModel;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -11,7 +12,7 @@ using Xamarin.Forms.Xaml;
 namespace ReactiveUIDemo.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class ItemsPage : ContentPageBase<ItemsViewModel>
+    public partial class ItemsPage : ReactiveContentPage<ItemsViewModel>
     {
         public ObservableCollection<string> Items { get; set; }
 
